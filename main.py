@@ -24,7 +24,7 @@ round3img = pygame.image.load("assets/round3.png").convert_alpha()
 round4img = pygame.image.load("assets/round4.png").convert_alpha()
 round5img = pygame.image.load("assets/round5.png").convert_alpha()
 frameimg = pygame.image.load("assets/frame.png").convert_alpha()
-victoryimg = pygame.image.load("assets/frame.png").convert_alpha()
+victoryimg = pygame.image.load("assets/victory.png").convert_alpha()
 gameoverimg = pygame.image.load("assets/gameover.png").convert_alpha()
 playagainimg = pygame.image.load("assets/play again.png").convert_alpha()
 scribblebgimg = pygame.image.load("assets/scribblebg.png").convert_alpha()
@@ -153,26 +153,45 @@ displayimage2 = pygame.transform.scale(displayimage2, (500, 500))
 displayimage3 = pygame.transform.scale(displayimage3, (500, 500))
 displayimage4 = pygame.transform.scale(displayimage4, (500, 500))
 displayimage5 = pygame.transform.scale(displayimage5, (500, 500))
+victoryimg = pygame.transform.scale(victoryimg, (1280, 500))
+gameoverimg = pygame.transform.scale(gameoverimg, (1280, 500))
 
 frameimg = pygame.transform.scale(frameimg, (600, 600))
 
 
-displayimage1rect = displayimage1.get_rect(center=(640, 360))
-displayimage2rect = displayimage2.get_rect(center=(640, 360))
-displayimage3rect = displayimage3.get_rect(center=(640, 360))
-displayimage4rect = displayimage4.get_rect(center=(640, 360))
-displayimage5rect = displayimage5.get_rect(center=(640, 360))
-framerect = frameimg.get_rect(center=(640, 360))
+displayimage1rect = displayimage1.get_rect(center=(640, 400))
+displayimage2rect = displayimage2.get_rect(center=(640, 400))
+displayimage3rect = displayimage3.get_rect(center=(640, 400))
+displayimage4rect = displayimage4.get_rect(center=(640, 400))
+displayimage5rect = displayimage5.get_rect(center=(640, 400))
+framerect = frameimg.get_rect(center=(640, 400))
+
+victoryimgrect = victoryimg.get_rect(center=(640, 400))
+gameoverimgrect = gameoverimg.get_rect(center=(640, 400))
 
 gtabuttonimg = pygame.transform.scale(gtabuttonimg, (500, 500))
 notgtabuttonimg = pygame.transform.scale(notgtabuttonimg, (500, 500))
 
 
-gtabuttonrect = gtabuttonimg.get_rect(center=(170, 360))
-notgtabuttonrect = notgtabuttonimg.get_rect(center=(1110, 360))
+gtabuttonrect = gtabuttonimg.get_rect(center=(190, 400))
+notgtabuttonrect = notgtabuttonimg.get_rect(center=(1110, 400))
 
-choicebuttonstate = False
 choicebuttonchangetime = 0
+lastresult = 3
+
+
+round1img = pygame.transform.scale(round1img, (500, 500))
+round2img = pygame.transform.scale(round2img, (500, 500))
+round3img = pygame.transform.scale(round3img, (500, 500))
+round4img = pygame.transform.scale(round4img, (500, 500))
+round5img = pygame.transform.scale(round5img, (500, 500))
+
+round1rect = round1img.get_rect(center=(640, 220))
+round2rect = round2img.get_rect(center=(640, 220))
+round3rect = round3img.get_rect(center=(640, 220))
+round4rect = round4img.get_rect(center=(640, 220))
+round5rect = round5img.get_rect(center=(640, 220))
+
 
 rounds = 1
 
@@ -185,10 +204,7 @@ while maingame == True and rounds <= 5:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
-        if rounds == 1:
-            print("round1")
-
+            
 
     if current_time - last_jitter_time > jitterscribbledelay:
         last_jitter_time = current_time
@@ -208,7 +224,7 @@ while maingame == True and rounds <= 5:
 
 
 
-    draw_buttongta = gtabuttonrect.inflate(-20, -10) if is_hovered else gtabuttonrect
+    draw_buttongta = gtabuttonrect.inflate(-20, -10) if is_hoveredgta else gtabuttonrect
     if is_hoveredgta:
         gta_draw_rect = gtabuttonrect.inflate(-20, -10)
         draw_buttongta = pygame.transform.smoothscale(gtabuttonimg, gta_draw_rect.size)
@@ -217,7 +233,7 @@ while maingame == True and rounds <= 5:
         draw_buttongta = gtabuttonimg
 
 
-    draw_buttonnotgta = startbutton.inflate(-20, -10) if is_hovered else notgtabuttonrect
+    draw_buttonnotgta = notgtabuttonrect.inflate(-20, -10) if is_hoverednotgta else notgtabuttonrect
     if is_hoverednotgta:
         notgta_draw_rect = notgtabuttonrect.inflate(-20, -10)
         draw_buttonnotgta = pygame.transform.smoothscale(notgtabuttonimg, notgta_draw_rect.size)
@@ -228,18 +244,229 @@ while maingame == True and rounds <= 5:
     screen.fill((100, 20, 56)) 
     screen.blit(scribble_img, scribble_rect)
 
-    screen.blit(displayimage5, displayimage5rect)
-   
-    screen.blit(frameimg, framerect)
     
-    screen.blit(draw_buttongta, gtabuttonrect)
-    screen.blit(draw_buttonnotgta, notgtabuttonrect)
+    
+    screen.blit(draw_buttongta, gta_draw_rect)
+    screen.blit(draw_buttonnotgta, notgta_draw_rect)
 
-    if choicebuttonstate == True and choicebuttonchangetime >= 500 and rounds < 5:
+
+    if rounds == 1:
+        screen.blit(round1img, round1rect)
+        screen.blit(displayimage1, displayimage1rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
+                if gtabuttonrect.collidepoint(event.pos) and randomimage1 == 1:
+                    clicksound.play()
+                    print("correct")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+
+                elif notgtabuttonrect.collidepoint(event.pos) and randomimage1 == 0:
+                    clicksound.play()
+                    print("correct")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+
+                elif gtabuttonrect.collidepoint(event.pos) and randomimage1 == 0:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+
+                elif notgtabuttonrect.collidepoint(event.pos) and randomimage1 == 1:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+
+                else:
+                    break
+
+    elif rounds == 2:
+        screen.blit(round2img, round2rect)
+        screen.blit(displayimage2, displayimage2rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
+                if event.type == pygame.MOUSEBUTTONDOWN and gtabuttonrect.collidepoint(event.pos) and randomimage2 == 1:
+                    clicksound.play()
+                    print("correct")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and notgtabuttonrect.collidepoint(event.pos) and randomimage2 == 0:
+                    clicksound.play()
+                    print("correct")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and gtabuttonrect.collidepoint(event.pos) and randomimage2 == 0:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and notgtabuttonrect.collidepoint(event.pos) and randomimage2 == 1:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+
+                else:
+                    break
+
+    elif rounds == 3:
+        screen.blit(round3img, round3rect)
+        screen.blit(displayimage3, displayimage3rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
+                if event.type == pygame.MOUSEBUTTONDOWN and gtabuttonrect.collidepoint(event.pos) and randomimage3 == 1:
+                    clicksound.play()
+                    print("correct")
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+                    rounds += 1
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and notgtabuttonrect.collidepoint(event.pos) and randomimage3 == 0:
+                    clicksound.play()
+                    print("correct")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and gtabuttonrect.collidepoint(event.pos) and randomimage3 == 0:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and notgtabuttonrect.collidepoint(event.pos) and randomimage3 == 1:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+                else:
+                    break
+
+    elif rounds == 4:
+        screen.blit(round4img, round4rect)
+        screen.blit(displayimage4, displayimage4rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
+                if event.type == pygame.MOUSEBUTTONDOWN and gtabuttonrect.collidepoint(event.pos) and randomimage4 == 1:
+                    clicksound.play()
+                    print("correct")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and notgtabuttonrect.collidepoint(event.pos) and randomimage4 == 0:
+                    clicksound.play()
+                    print("correct")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and gtabuttonrect.collidepoint(event.pos) and randomimage4 == 0:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and notgtabuttonrect.collidepoint(event.pos) and randomimage4 == 1:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+                else:
+                    break
+
+    elif rounds == 5:
+        screen.blit(round5img, round5rect)
+        screen.blit(displayimage5, displayimage5rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
+                if event.type == pygame.MOUSEBUTTONDOWN and gtabuttonrect.collidepoint(event.pos) and randomimage5 == 1:
+                    clicksound.play()
+                    print("correct")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and notgtabuttonrect.collidepoint(event.pos) and randomimage5 == 0:
+                    clicksound.play()
+                    print("correct")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 1
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and gtabuttonrect.collidepoint(event.pos) and randomimage5 == 0:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+                elif event.type == pygame.MOUSEBUTTONDOWN and notgtabuttonrect.collidepoint(event.pos) and randomimage5 == 1:
+                    clicksound.play()
+                    print("wrong")
+                    rounds += 1
+                    choicebuttonchangetime = current_time
+                    lastresult = 0
+
+                else:
+                    break
+
+    screen.blit(frameimg, framerect)
+
+    if lastresult != 3 and (current_time - choicebuttonchangetime) <= 5000 and rounds < 5:
         #show banner on basis of lose or win and
+        if lastresult == 1:
+            screen.blit(victoryimg, victoryimgrect)
+
+        elif lastresult == 0:
+            screen.blit(gameoverimg, gameoverimgrect)
+        else:
+            pass
+
         choicebuttonstate  = False
 
-    elif choicebuttonstate == True and choicebuttonchangetime >= 500 and rounds == 5:
+    elif lastresult != 3 and (current_time - choicebuttonchangetime) <= 5000 and rounds == 5:
         #show the play again button aswell
         choicebuttonstate  = False
 
@@ -247,7 +474,6 @@ while maingame == True and rounds <= 5:
         #hide banner
         choicebuttonstate  = False
 
-
+    
     pygame.display.flip()
     clock.tick(60)
-
